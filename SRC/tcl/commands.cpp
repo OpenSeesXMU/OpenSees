@@ -173,7 +173,10 @@ OPS_Stream *opserrPtr = &sserr;
 #include <DisplacementControl.h>
 
 #include <PFEMIntegrator.h>
-#include<Integrator.h>//Abbas
+#include <Integrator.h>//Abbas
+
+//  recorders
+#include <Recorder.h> //SAJalali
 
 extern void *OPS_NewtonRaphsonAlgorithm(void);
 extern void *OPS_ModifiedNewton(void);
@@ -213,7 +216,6 @@ extern void *OPS_NewmarkHSFixedNumIter(void);
 extern void *OPS_NewmarkHSIncrLimit(void);
 extern void *OPS_NewmarkHSIncrReduct(void);
 extern void *OPS_WilsonTheta(void);
-
 
 
 #include <Newmark.h>
@@ -376,15 +378,6 @@ const char * getInterpPWD(Tcl_Interp *interp);
 
 #include <XmlFileStream.h>
 
-/*
-#include <SimulationInformation.h>
-extern SimulationInformation simulationInfo;
-extern char *simulationInfoOutputFilename;
-extern char *neesCentralProjID;
-extern char *neesCentralExpID;
-extern char *neesCentralUser;
-extern char *neesCentralPasswd;
-*/
 
 #include <Response.h>
 
@@ -434,8 +427,8 @@ int OPS_MAIN_DOMAIN_PARTITION_ID =0;
 DomainPartitioner *OPS_DOMAIN_PARTITIONER =0;
 GraphPartitioner  *OPS_GRAPH_PARTITIONER =0;
 LoadBalancer      *OPS_BALANCER = 0;
-FEM_ObjectBroker  *OPS_OBJECT_BROKER;
-MachineBroker     *OPS_MACHINE;
+FEM_ObjectBroker  *OPS_OBJECT_BROKER =0;
+MachineBroker     *OPS_MACHINE =0;
 Channel          **OPS_theChannels = 0;
 
 bool setMPIDSOEFlag = false;
@@ -565,10 +558,6 @@ SimulationInformation simulationInfo;
 SimulationInformation *theSimulationInfoPtr = 0;
 
 char *simulationInfoOutputFilename = 0;
-char *neesCentralProjID =0;
-char * neesCentralExpID =0;
-char *neesCentralUser =0;
-char *neesCentralPasswd =0;
 
 
 FE_Datastore *theDatabase  =0;
@@ -632,17 +621,12 @@ opsRecv(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
 int 
 opsPartition(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
 
-int
-neesUpload(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
 
 int
 peerNGA(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
 
 int
 defaultUnits(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
-
-int
-neesMetaData(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
 
 int
 stripOpenSeesXML(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv);
@@ -817,7 +801,11 @@ int OpenSeesAppInit(Tcl_Interp *interp) {
 #endif
 	
     //Tcl_CreateObjCommand(interp, "interp", Tcl_InterpOpenSeesObjCmd, NULL, NULL);
-    Tcl_CreateObjCommand(interp, "pset", &OPS_SetObjCmd,
+	
+	Tcl_CreateCommand(interp, "recorderValue", &OPS_recorderValue,
+		(ClientData)NULL, (Tcl_CmdDeleteProc *)NULL); //by SAJalali
+
+	Tcl_CreateObjCommand(interp, "pset", &OPS_SetObjCmd,
 			 (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL); 
 	
     Tcl_CreateObjCommand(interp, "source", &OPS_SourceCmd,
@@ -978,9 +966,7 @@ int OpenSeesAppInit(Tcl_Interp *interp) {
 
     Tcl_CreateCommand(interp, "record",  &record,(ClientData)NULL, NULL);
 
-    Tcl_CreateCommand(interp, "metaData",  &neesMetaData,(ClientData)NULL, NULL);
     Tcl_CreateCommand(interp, "defaultUnits", &defaultUnits,(ClientData)NULL, NULL);
-    Tcl_CreateCommand(interp, "neesUpload", &neesUpload,(ClientData)NULL, NULL);
     Tcl_CreateCommand(interp, "stripXML", &stripOpenSeesXML,(ClientData)NULL, NULL);
     Tcl_CreateCommand(interp, "convertBinaryToText", &convertBinaryToText,(ClientData)NULL, NULL);
     Tcl_CreateCommand(interp, "convertTextToBinary", &convertTextToBinary,(ClientData)NULL, NULL);
@@ -1468,6 +1454,57 @@ wipeAnalysis(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
   return TCL_OK;  
 }
 
+// by SAJalali
+int OPS_recorderValue(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
+{
+	// make sure at least one other argument to contain type of system
+
+	// clmnID starts from 1
+	if (argc < 3) {
+		opserr << "WARNING want - recorderValue recorderTag clmnID <rowOffset> <-reset>\n";
+		return TCL_ERROR;
+	}
+
+	int tag, rowOffset;
+	int dof = -1;
+
+	if (Tcl_GetInt(interp, argv[1], &tag) != TCL_OK) {
+		opserr << "WARNING recorderValue recorderTag? clmnID <rowOffset> <-reset> could not read recorderTag \n";
+		return TCL_ERROR;
+	}
+
+	if (Tcl_GetInt(interp, argv[2], &dof) != TCL_OK) {
+		opserr << "WARNING recorderValue recorderTag? clmnID - could not read clmnID \n";
+		return TCL_ERROR;
+	}
+	dof--;
+	rowOffset = 0;
+	int curArg = 3;
+	if (argc > curArg)
+	{
+		if (Tcl_GetInt(interp, argv[curArg], &rowOffset) != TCL_OK) {
+			opserr << "WARNING recorderValue recorderTag? clmnID <rowOffset> <-reset> could not read rowOffset \n";
+			return TCL_ERROR;
+		}
+		curArg++;
+	}
+	bool reset = false;
+	if (argc > curArg)
+	{
+		if (strcmp(argv[curArg], "-reset") == 0)
+			reset = true;
+		curArg++;
+	}
+	Recorder* theRecorder = theDomain.getRecorder(tag);
+	double res = theRecorder->getRecordedValue(dof, rowOffset, reset);
+	// now we copy the value to the tcl string that is returned
+	//sprintf(interp->result, "%35.8f ", res);
+	char buffer [40];
+	sprintf(buffer,"%35.8f", res);	
+	Tcl_SetResult(interp, buffer, TCL_VOLATILE);
+	
+	return TCL_OK;
+}
 
 int 
 resetModel(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
@@ -1676,13 +1713,16 @@ buildModel(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
 int 
 partitionModel(int eleTag)
 {
+  if (OPS_PARTITIONED == true)
+    return 0;
+
   int result = 0;
   
   if (OPS_theChannels != 0)
     delete [] OPS_theChannels;
 
   OPS_theChannels = new Channel *[OPS_NUM_SUBDOMAINS];
-  
+
   // create some subdomains
   for (int i=1; i<=OPS_NUM_SUBDOMAINS; i++) {
     if (i != OPS_MAIN_DOMAIN_PARTITION_ID) {
@@ -1700,10 +1740,11 @@ partitionModel(int eleTag)
     OPS_DOMAIN_PARTITIONER = new DomainPartitioner(*OPS_GRAPH_PARTITIONER);
     theDomain.setPartitioner(OPS_DOMAIN_PARTITIONER);
   }
+
  // opserr << "commands.cpp - partition numPartitions: " << OPS_NUM_SUBDOMAINS << endln;
 
   result = theDomain.partition(OPS_NUM_SUBDOMAINS, OPS_USING_MAIN_DOMAIN, OPS_MAIN_DOMAIN_PARTITION_ID, eleTag);
-  
+
   if (result < 0) 
     return result;
 
@@ -1740,7 +1781,7 @@ partitionModel(int eleTag)
     theSub->setDomainDecompAnalysis(*theSubAnalysis);
     //  delete theSubAnalysis;
   }
-
+  
   return result;
 }
 
@@ -1758,7 +1799,6 @@ opsPartition(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
     }
   }
   partitionModel(eleTag);
-
 #endif
   return TCL_OK;
 }
@@ -1773,12 +1813,13 @@ analyzeModel(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
   int result = 0;
 
 #ifdef _PARALLEL_PROCESSING
-  if (OPS_PARTITIONED == false && OPS_NUM_SUBDOMAINS > 1) 
+  if (OPS_PARTITIONED == false && OPS_NUM_SUBDOMAINS > 1) {
     if (partitionModel(0) < 0) {
       opserr << "WARNING before analysis; partition failed - too few elements\n";
       OpenSeesExit(clientData, interp, argc, argv);
       return TCL_ERROR;
     }
+  }
 #endif
 
   if (theStaticAnalysis != 0) {
@@ -1792,6 +1833,7 @@ analyzeModel(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
       return TCL_ERROR;	      
 
     result = theStaticAnalysis->analyze(numIncr);
+
 #ifdef _PFEM
   } else if(thePFEMAnalysis != 0) {
       result = thePFEMAnalysis->analyze();
@@ -5395,12 +5437,14 @@ eigenAnalysis(ClientData clientData, Tcl_Interp *interp, int argc,
 
 
 #ifdef _PARALLEL_PROCESSING
-      if (OPS_PARTITIONED == false && OPS_NUM_SUBDOMAINS > 1) 
+
+      if (OPS_PARTITIONED == false && OPS_NUM_SUBDOMAINS > 1) {
 	if (partitionModel(0) < 0) {
 	  opserr << "WARNING before analysis; partition failed - too few elements\n";
 	  OpenSeesExit(clientData, interp, argc, argv);
 	  return TCL_ERROR;
 	}
+      }
 
       if (theStaticAnalysis != 0 || theTransientAnalysis != 0) {
 	SubdomainIter &theSubdomains = theDomain.getSubdomains();
@@ -8481,7 +8525,7 @@ opsSend(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
     }
 
   } else {
-    if (myPID == 0) {
+    if (myPID == 0) { 
       MPI_Bcast((void *)(&msgLength), 1, MPI_INT,  0, MPI_COMM_WORLD);
       MPI_Bcast((void *)gMsg, msgLength, MPI_CHAR, 0, MPI_COMM_WORLD);
     } else {
@@ -8575,72 +8619,6 @@ opsRecv(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
 
   return TCL_OK;  
 }
-
-
-int
-neesMetaData(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
-{
-  if (argc < 2)
-    return -1;
-  
-  int count = 1;
-  while (count < argc) {
-    if ((strcmp(argv[count],"-title") == 0) || (strcmp(argv[count],"-Title") == 0) 
-	|| (strcmp(argv[count],"-TITLE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.setTitle(argv[count+1]);	
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-contact") == 0) || (strcmp(argv[count],"-Contact") == 0) 
-	       || (strcmp(argv[count],"-CONTACT") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.setContact(argv[count+1]);	
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-description") == 0) || (strcmp(argv[count],"-Description") == 0) 
-	       || (strcmp(argv[count],"-DESCRIPTION") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.setDescription(argv[count+1]);	
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-modelType") == 0) || (strcmp(argv[count],"-ModelType") == 0) 
-	       || (strcmp(argv[count],"-MODELTYPE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.addModelType(argv[count+1]);
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-analysisType") == 0) || (strcmp(argv[count],"-AnalysisType") == 0) 
-	       || (strcmp(argv[count],"-ANALYSISTYPE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.addAnalysisType(argv[count+1]);
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-elementType") == 0) || (strcmp(argv[count],"-ElementType") == 0) 
-	       || (strcmp(argv[count],"-ELEMENTTYPE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.addElementType(argv[count+1]);
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-materialType") == 0) || (strcmp(argv[count],"-MaterialType") == 0) 
-	       || (strcmp(argv[count],"-MATERIALTYPE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.addMaterialType(argv[count+1]);
-	count += 2;
-      }
-    } else if ((strcmp(argv[count],"-loadingType") == 0) || (strcmp(argv[count],"-LoadingType") == 0) 
-	       || (strcmp(argv[count],"-LOADINGTYPE") == 0)) {
-      if (count+1 < argc) {
-	simulationInfo.addLoadingType(argv[count+1]);
-	count += 2;
-      }
-    } else {
-      opserr << "WARNING unknown arg type: " << argv[count] << endln;
-      count++;
-    }
-  }
-  return TCL_OK;
-}
-
 
 
 int
@@ -8845,55 +8823,6 @@ defaultUnits(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
 
 
 
-int 
-neesUpload(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **argv)
-{
-  if (argc < 10) { 
-    opserr << "WARNING neesUpload -user isername? -pass passwd? -proj projID? -exp expID?\n";
-    return TCL_ERROR;
-  }
-  int projID =0;
-  int expID =0;
-  const char *userName =0;
-  const char *userPasswd =0;
-
-  int currentArg = 1;
-  while (currentArg+1 < argc) {
-    if (strcmp(argv[currentArg],"-user") == 0) {
-      userName = argv[currentArg+1];
-      
-    } else if (strcmp(argv[currentArg],"-pass") == 0) {
-      userPasswd = argv[currentArg+1];
-
-    } else if (strcmp(argv[currentArg],"-projID") == 0) {
-      if (Tcl_GetInt(interp, argv[currentArg+1], &projID) != TCL_OK) {
-	opserr << "WARNING neesUpload -invalid expID\n";
-	return TCL_ERROR;	        
-      }
-      
-    } else if (strcmp(argv[currentArg],"-expID") == 0) {
-      if (Tcl_GetInt(interp, argv[currentArg+1], &expID) != TCL_OK) {
-	opserr << "WARNING neesUpload -invalid expID\n";
-	return TCL_ERROR;	        
-      }
-    
-    } else if (strcmp(argv[currentArg],"-title") == 0) {
-      simulationInfo.setTitle(argv[currentArg+1]);	
-      
-    } else if (strcmp(argv[currentArg],"-description") == 0) {
-      simulationInfo.setDescription(argv[currentArg+1]);	
-      
-    }
-
-    currentArg+=2;
-  }        
-
-  simulationInfo.neesUpload(userName, userPasswd, projID, expID);
-
-  return TCL_OK;
-}
-
-
 const char * getInterpPWD(Tcl_Interp *interp) {
   static char *pwd = 0;
 
@@ -8965,24 +8894,6 @@ OpenSeesExit(ClientData clientData, Tcl_Interp *interp, int argc, TCL_Char **arg
     simulationInfoOutputFile << simulationInfo;
     simulationInfoOutputFile.close();
     simulationInfoOutputFilename = 0;
-  }
-
-  if (neesCentralProjID != 0) {
-    opserr << "UPLOADING To NEEScentral ...\n";
-    int pid =0;
-    int expid =0;
-    if (Tcl_GetInt(interp, neesCentralProjID, &pid) != TCL_OK) {
-      opserr << "WARNING neesUpload -invalid projID\n";
-      return TCL_ERROR;	        
-    }
-    if (neesCentralExpID != 0) 
-      if (Tcl_GetInt(interp, neesCentralExpID, &expid) != TCL_OK) {
-	opserr << "WARNING neesUpload -invalid projID\n";
-	return TCL_ERROR;	        
-      }
-    
-    simulationInfo.neesUpload(neesCentralUser, neesCentralPasswd, pid, expid);
-    neesCentralProjID = 0;
   }
 
   int returnCode = 0;
@@ -9377,36 +9288,6 @@ extern "C" int OpenSeesParseArgv(int argc, char **argv)
 	      simulationInfoOutputFilename = argv[currentArg+1];	    
 	    }			   
 	    currentArg+=2;
-	  } else if ((strcmp(argv[currentArg], "-upload") == 0) || (strcmp(argv[currentArg], "-UPLOAD") == 0)) {
-	    bool more = true;
-	    currentArg++;
-	    while (more == true && currentArg < argc) {
-	      
-	      if (strcmp(argv[currentArg],"-user") == 0) {
-		neesCentralUser = argv[currentArg+1];
-		currentArg += 2;
-
-	      } else if (strcmp(argv[currentArg],"-pass") == 0) {
-		neesCentralPasswd = argv[currentArg+1];
-		currentArg += 2;
-	      } else if (strcmp(argv[currentArg],"-projID") == 0) {
-		neesCentralProjID = argv[currentArg+1];
-		currentArg += 2;
-		
-	      } else if (strcmp(argv[currentArg],"-expID") == 0) {
-		neesCentralExpID = argv[currentArg+1];
-		currentArg += 2;
-    
-	      } else if (strcmp(argv[currentArg],"-title") == 0) {
-		simulationInfo.setTitle(argv[currentArg+1]);	
-		currentArg += 2;
-      
-	      } else if (strcmp(argv[currentArg],"-description") == 0) {
-		simulationInfo.setDescription(argv[currentArg+1]);	
-		currentArg += 2;      
-	      } else
-		more = false;
-	    }
 	  } else 
 	    currentArg++;
 	}
