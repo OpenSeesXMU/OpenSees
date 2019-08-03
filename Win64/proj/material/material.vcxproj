@@ -108,6 +108,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\SRC\material\nD\AcousticMedium.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\nD\BeamFiberMaterial2dPS.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear5.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear7.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\DruckerPrager3DThermal.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\DruckerPragerThermal.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\ElasticIsotropic3DThermal.cpp" />
@@ -131,6 +134,7 @@
     <ClCompile Include="..\..\..\SRC\material\nD\PlateFromPlaneStressMaterialThermal.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\PlateRebarMaterial.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\PlateRebarMaterialThermal.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\nD\soil\PressureDependMultiYield03.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\stressDensityModel\stressDensity.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\UWmaterials\J2CyclicBoundingSurface.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\UWmaterials\ManzariDafalias3DRO.cpp" />
@@ -461,6 +465,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\SRC\material\nD\AcousticMedium.h" />
+    <ClInclude Include="..\..\..\SRC\material\nD\BeamFiberMaterial2dPS.h" />
+    <ClInclude Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear5.h" />
+    <ClInclude Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear7.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\DruckerPrager3DThermal.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\DruckerPragerThermal.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\ElasticIsotropic3DThermal.h" />
@@ -484,6 +491,7 @@
     <ClInclude Include="..\..\..\SRC\material\nD\PlateFromPlaneStressMaterialThermal.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\PlateRebarMaterial.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\PlateRebarMaterialThermal.h" />
+    <ClInclude Include="..\..\..\SRC\material\nD\soil\PressureDependMultiYield03.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\stressDensityModel\stressDensity.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\UWmaterials\J2CyclicBoundingSurface.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\UWmaterials\ManzariDafalias3DRO.h" />
