@@ -217,6 +217,7 @@
     <ClCompile Include="..\..\..\SRC\material\uniaxial\fedeas\PD1.c" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\ParallelMaterial.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\PathIndependentMaterial.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\uniaxial\PerfectPlasticMaterial.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\Pinching4Material.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\limitState\PinchingLimitStateMaterial.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\fedeas\PlasticDamageMaterial.cpp" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\..\..\SRC\material\uniaxial\SteelMPF.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\TclModelBuilderUniaxialMaterialCommand.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\TensionOnlyMaterial.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\uniaxial\testSteel01.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\TriMatrix.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\UniaxialJ2Plasticity.cpp" />
     <ClCompile Include="..\..\..\SRC\material\uniaxial\UniaxialMaterial.cpp" />
@@ -572,6 +574,7 @@
     <ClInclude Include="..\..\..\SRC\material\uniaxial\OriginCentered.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\ParallelMaterial.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\PathIndependentMaterial.h" />
+    <ClInclude Include="..\..\..\SRC\material\uniaxial\PerfectPlasticMaterial.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\Pinching4Material.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\limitState\PinchingLimitStateMaterial.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\fedeas\PlasticDamageMaterial.h" />
@@ -601,6 +604,7 @@
     <ClInclude Include="..\..\..\SRC\material\uniaxial\SteelMP.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\SteelMPF.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\TensionOnlyMaterial.h" />
+    <ClInclude Include="..\..\..\SRC\material\uniaxial\testSteel01.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\TriMatrix.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\UniaxialJ2Plasticity.h" />
     <ClInclude Include="..\..\..\SRC\material\uniaxial\UniaxialMaterial.h" />

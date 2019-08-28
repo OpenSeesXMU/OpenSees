@@ -49,7 +49,7 @@
 #include <KikuchiBearing.h>
 #include <YamamotoBiaxialHDR.h>
 #include<WheelRail.h>
-
+#include<corotationalTruss2D.h>
 extern 
 #ifdef _WIN32
 int __cdecl
@@ -152,7 +152,7 @@ extern void *OPS_ElastomericBearingBoucWenMod3d(void);
 extern void *OPS_PFEMElement2DBubble(const ID &info);
 extern void *OPS_PFEMElement2Dmini(const ID &info);
 extern void *OPS_PFEMElement2D();
-
+extern void *OPS_corotationalTruss2D(void);
 #ifdef _HAVE_LHNMYS
 extern void* OPS_BeamColumnwLHNMYS(void);
 #endif
@@ -376,6 +376,10 @@ TclModelBuilder_addWheelRail(ClientData clientData, Tcl_Interp *interp, int argc
 	TCL_Char **argv, Domain*, TclModelBuilder *, int argStart);
 
 
+extern int
+TclModelBuilder_addcorotationalTruss2D(ClientData, Tcl_Interp *, int, TCL_Char **,
+	Domain*, TclModelBuilder *);
+
 int
 TclModelBuilderElementCommand(ClientData clientData, Tcl_Interp *interp,
 			      int argc, TCL_Char **argv,
@@ -489,16 +493,27 @@ TclModelBuilderElementCommand(ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     */
-  } else if (strcmp(argv[1],"zeroLengthImpact3D") == 0) {
-    void *theEle = OPS_ZeroLengthImpact3D();
-    if (theEle != 0) 
-      theElement = (Element *)theEle;
-    else {
-      opserr << "TclElementCommand -- unable to create element of type : " << argv[1] << endln;
-      return TCL_ERROR;
-    }
+  }
+  else if (strcmp(argv[1], "zeroLengthImpact3D") == 0) {
+	  void *theEle = OPS_ZeroLengthImpact3D();
+	  if (theEle != 0)
+		  theElement = (Element *)theEle;
+	  else {
+		  opserr << "TclElementCommand -- unable to create element of type : " << argv[1] << endln;
+		  return TCL_ERROR;
+	  }
+  }
+  else if ((strcmp(argv[1], "corotationalTruss2D") == 0) || strcmp(argv[1], "corotationaltruss2D") == 0) {
+	  void *theEle=OPS_corotationalTruss2D();
+	  if (theEle != 0)
+		  theElement = (Element *)theEle;
+	  else {
+		  opserr << "TclElementCommand -- unable to create element of type : " << argv[1] << endln;
+		  return TCL_ERROR;
+	  }
+  }
 
-  } else if ((strcmp(argv[1],"ModElasticBeam2d") == 0) || (strcmp(argv[1],"modElasticBeam2d")) == 0) {
+     else if ((strcmp(argv[1],"ModElasticBeam2d") == 0) || (strcmp(argv[1],"modElasticBeam2d")) == 0) {
     Element *theEle = (Element *)OPS_ModElasticBeam2d();
     if (theEle != 0) 
       theElement = theEle;

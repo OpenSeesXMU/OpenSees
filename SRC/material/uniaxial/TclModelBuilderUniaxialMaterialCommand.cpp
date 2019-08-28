@@ -66,9 +66,9 @@
 #include <KikuchiAikenLRB.h>
 #include <AxialSp.h>
 #include <AxialSpHD.h>
-
+#include <PerfectPlasticMaterial.h>
 // #include <SMAMaterial.h>     // Davide Fugazza
-
+#include <testSteel01.h>
 #include <Vector.h>
 #include <string.h>
 
@@ -1316,7 +1316,63 @@ TclModelBuilderUniaxialMaterialCommand (ClientData clientData, Tcl_Interp *inter
       theMaterial = new Concrete07(tag, fpc, epsc0, Ec, fpt, epst0, xcrp, xcrn, r);
     }
 
-    
+
+
+	else if (strcmp(argv[1], "PerfectPlasticMaterial") == 0) {
+	if (argc < 3) {
+		opserr << "WARNING insufficient arguments\n";
+		printCommand(argc, argv);
+		opserr << "Want: uniaxialMaterial PerfectPlasticMaterial tag? " << endln;
+		return TCL_ERROR;
+	}
+	int tag; double E; double Stress0;
+	
+	if (Tcl_GetInt(interp, argv[2], &tag) != TCL_OK) {
+		opserr << "WARNING invalid tag in PerfectPlasticMaterial " << endln;
+		return TCL_ERROR;
+	}
+	if (Tcl_GetDouble(interp, argv[3], &E) != TCL_OK) {
+		opserr << "WARNING E in PerfectPlasticMaterial " << endln;
+		return TCL_ERROR;
+	}
+	if (Tcl_GetDouble(interp, argv[4], &Stress0) != TCL_OK) {
+		opserr << "WARNING Stress0 in PerfectPlasticMaterial " << endln;
+		return TCL_ERROR;
+	}
+	theMaterial = new PerfectPlasticMaterial(tag, E, Stress0);
+	}
+
+
+	else if (strcmp(argv[1], "testSteel01") == 0) {
+	if (argc < 6) {
+		opserr << "WARNING insufficient arguments\n";
+		printCommand(argc, argv);
+		opserr << "Want: uniaxialMaterial testSteel01 tag? " << endln;
+		return TCL_ERROR;
+	}
+	int tag; double E; double Stress0; double b;
+
+	if (Tcl_GetInt(interp, argv[2], &tag) != TCL_OK) {
+		opserr << "WARNING invalid tag in testSteel01 " << endln;
+		return TCL_ERROR;
+	}
+	if (Tcl_GetDouble(interp, argv[3], &E) != TCL_OK) {
+		opserr << "WARNING E in testSteel01 " << endln;
+		return TCL_ERROR;
+	}
+	if (Tcl_GetDouble(interp, argv[4], &Stress0) != TCL_OK) {
+		opserr << "WARNING Stress0 in testSteel01 " << endln;
+		return TCL_ERROR;
+	}
+	if (Tcl_GetDouble(interp, argv[5], &b) != TCL_OK) {
+		opserr << "WARNING Stress0 in testSteel01 " << endln;
+		return TCL_ERROR;
+	}
+	theMaterial = new testSteel01(tag, E, Stress0, b);
+	}
+
+
+
     else if (strcmp(argv[1],"Viscous") == 0) {
 
       void *theMat = OPS_ViscousMaterial();

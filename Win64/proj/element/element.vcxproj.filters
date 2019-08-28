@@ -893,6 +893,9 @@
     <ClCompile Include="..\..\..\SRC\element\dispBeamColumn\TimoshenkoBeamColumn2d.cpp">
       <Filter>dispBeamColumn</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\SRC\element\truss\corotationalTruss2D.cpp">
+      <Filter>truss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\SRC\element\Element.h">
@@ -1554,6 +1557,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SRC\element\elasticBeamColumn\WheelRail.h">
       <Filter>elasticBeamColumn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SRC\element\truss\corotationalTruss2D.h">
+      <Filter>truss</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

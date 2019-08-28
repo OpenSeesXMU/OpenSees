@@ -356,6 +356,8 @@
     <ClCompile Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear7.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\soil\PressureDependMultiYield03.cpp" />
     <ClCompile Include="..\..\..\SRC\material\nD\BeamFiberMaterial2dPS.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\uniaxial\PerfectPlasticMaterial.cpp" />
+    <ClCompile Include="..\..\..\SRC\material\uniaxial\testSteel01.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\SRC\material\nD\AcousticMedium.h" />
@@ -696,5 +698,7 @@
     <ClInclude Include="..\..\..\SRC\material\nD\ConcreteMcftNonLinear7.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\soil\PressureDependMultiYield03.h" />
     <ClInclude Include="..\..\..\SRC\material\nD\BeamFiberMaterial2dPS.h" />
+    <ClInclude Include="..\..\..\SRC\material\uniaxial\PerfectPlasticMaterial.h" />
+    <ClInclude Include="..\..\..\SRC\material\uniaxial\testSteel01.h" />
   </ItemGroup>
 </Project>
