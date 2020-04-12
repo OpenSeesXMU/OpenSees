@@ -152,7 +152,7 @@ extern void *OPS_ElastomericBearingBoucWenMod3d(void);
 extern void *OPS_PFEMElement2DBubble(const ID &info);
 extern void *OPS_PFEMElement2Dmini(const ID &info);
 extern void *OPS_PFEMElement2D();
-
+extern void *OPS_corotTruss2D();
 #ifdef _HAVE_LHNMYS
 extern void* OPS_BeamColumnwLHNMYS(void);
 #endif
@@ -376,9 +376,6 @@ TclModelBuilder_addWheelRail(ClientData clientData, Tcl_Interp *interp, int argc
 	TCL_Char **argv, Domain*, TclModelBuilder *, int argStart);
 
 
-extern int
-TclModelBuilder_addcorotationalTruss2D(ClientData, Tcl_Interp *, int, TCL_Char **,
-	Domain*, TclModelBuilder *);
 
 int
 TclModelBuilderElementCommand(ClientData clientData, Tcl_Interp *interp,
@@ -390,7 +387,7 @@ TclModelBuilderElementCommand(ClientData clientData, Tcl_Interp *interp,
     opserr << "WARNING builder has been destroyed\n";
     return TCL_ERROR;
   }
-
+    
 
   OPS_ResetInput(clientData, interp, 2, argc, argv, theTclDomain, theTclBuilder);
 
@@ -418,7 +415,17 @@ TclModelBuilderElementCommand(ClientData clientData, Tcl_Interp *interp,
       opserr << "TclElementCommand -- unable to create element of type : " << argv[1] << endln;
       return TCL_ERROR;      
     }
+  }
+  else if ((strcmp(argv[1], "corotTruss2D") == 0) || (strcmp(argv[1], "corotTruss2D") == 0)) {
 
+	  void *theEle = OPS_corotTruss2D();
+	  if (theEle != 0)
+		  theElement = (Element *)theEle;
+	  else {
+		  opserr << "TclElementCommand -- unable to create element of type : " << argv[1] << endln;
+		  return TCL_ERROR;
+	  }
+ 
   } else if ((strcmp(argv[1],"trussSection") == 0) || (strcmp(argv[1],"TrussSection") == 0)) {
 
     void *theEle = OPS_TrussSectionElement(); 

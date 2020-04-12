@@ -1,0 +1,17 @@
+WARNING invalid nodeId: C:/ActiveTcl/lib/reg1.3/tclreg13.dll - load nodeId 1 forces
+WARNING invalid nodeId: C:/ActiveTcl/lib/reg1.3/tclreg13.dll - load nodeId 1 forces
+
+Analysis started  : 15:32:36
+
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.25945e-12 (max: 1e-08, Norm deltaR: 2.85203e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 2.03984e-11 (max: 1e-08, Norm deltaR: 2.80245e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 3.95414e-11 (max: 1e-08, Norm deltaR: 2.82123e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 5.86801e-11 (max: 1e-08, Norm deltaR: 2.8794e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 7.7812e-11 (max: 1e-08, Norm deltaR: 2.90882e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 9.69357e-11 (max: 1e-08, Norm deltaR: 2.90238e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.1605e-10 (max: 1e-08, Norm deltaR: 2.9248e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.35152e-10 (max: 1e-08, Norm deltaR: 2.83814e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.5424e-10 (max: 1e-08, Norm deltaR: 2.81596e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.73312e-10 (max: 1e-08, Norm deltaR: 3.04067e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 1.92366e-10 (max: 1e-08, Norm deltaR: 3.11247e-07)
+CTestNormDispIncr::test() - iteration: 3 current Norm: 2.114e-10 (max: 1e-08, Norm deltaR: 2.70167e-07)

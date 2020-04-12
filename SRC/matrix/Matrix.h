@@ -78,7 +78,7 @@ class Matrix
     int addMatrixTransposeProduct(double factThis, const Matrix &A, const Matrix &B, double factOther); // A'B
     int addMatrixTripleProduct(double factThis, const Matrix &A, const Matrix &B, double factOther); // A'BA
     int addMatrixTripleProduct(double factThis, const Matrix &A, const Matrix &B, const Matrix &C, double otherFact); //A'BC
-    
+	
     // overloaded operators 
     inline double &operator()(int row, int col);
     inline double operator()(int row, int col) const;

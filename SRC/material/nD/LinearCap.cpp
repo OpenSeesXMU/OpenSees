@@ -423,7 +423,7 @@ const Vector & LinearCap::getStress(void) {
 		unitVector2(i)=1.0;
 		unitVector2(i+3)=0.0;
 	}
-    CPlastStrainDev.addVector(1.0, unitVector2, -CPlastStrainI1/3.0);
+     CPlastStrainDev.addVector(1.0, unitVector2, -CPlastStrainI1/3.0);
 	
 
 

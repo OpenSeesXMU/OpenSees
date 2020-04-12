@@ -1,0 +1,43 @@
+ wipe ; 
+ model basic -ndm 2 -ndf 2
+ node 1   0.0  0.0
+ node 2   10.0  0.0   -mass 10000.0  10000.0
+ 
+ fix 1 1 1 
+ fix 2 0 1
+ #uniaxialMaterial Steel01     1   2e1    3.0e-2     0.01
+ uniaxialMaterial Elastic   2   20.0
+ element truss     1      1     2    1     1
+ element truss     2      1     2    1     2
+ recorder Node -file node2.out -time -node 2 -dof 1 2 disp
+ 
+ recorder Element -file stress1.out  -time  -ele 1  -material stress 
+ recorder Element -file strain1.out  -time  -ele 1  -material strain
+ recorder Element -file stress2.out  -time  -ele 2  -material stress 
+ recorder Element -file strain2.out  -time  -ele 2  -material strain
+ recorder Node    -file nodeReact.out  -time -precision 14 -node 1 -dof 1 2 reaction
+ 
+ set tabas "Path -filePath tabas.txt -dt 0.02 -factor 4"
+ pattern UniformExcitation  1   1  -accel      $tabas
+ constraints Transformation
+ numberer RCM
+ test NormDispIncr 1.E-8 25  2
+ algorithm Newton
+ system BandSPD
+ integrator Newmark 0.55 0.275625 
+ analysis Transient
+ 
+ parameter 11 
+ addToParameter 11 -element 1  -material b
+
+ analyze 1000  0.01
+ # parameter  11  element  1  -material  1   b 
+ set disp1 [nodeDisp 2 1 2]
+set a [nodeReaction 1 1]
+ 
+
+ 
+  updateParameter 11   0.02 
+ #analyze 10  0.01
+ 
+ 

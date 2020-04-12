@@ -471,7 +471,7 @@ CorotTruss::update(void)
   // Compute engineering strain and strain rate
   double strain = (Ln - Lo)/Lo;
   double rate = (d21[0]*v21[0] + d21[1]*v21[1] + d21[2]*v21[2])/Ln/Lo;
-  
+ // opserr << "strain is" << strain << endln;
   // Set material trial strain
   return theMaterial->setTrialStrain(strain,rate);
 }
@@ -522,7 +522,7 @@ CorotTruss::getTangentStiff(void)
             K(i+numDOF2,j+numDOF2) =  kg(i,j);
         }
     }
-
+//	opserr << "kg is" << K << "\n" << endln;
     return *theMatrix;
 }
 
@@ -705,7 +705,7 @@ CorotTruss::getResistingForce()
         P(i)         = -qg(i);
         P(i+numDOF2) =  qg(i);
     }
-    
+//	opserr << "P is" << P << endln;
     return *theVector;
 }
 
