@@ -1,16 +1,10 @@
-The OpenSees source code repository.
-This git repository contains all revisions to OpenSees source code since Version 2.3.2.
+An OpenSees source code repository that can be directly built in Visual Studio 2017 (Tcl8.6 is required).
 
-Older revisions of the code are available upon request.
+This is a repository that can be used for response sensitivity analysis. 
+Examples can be found here:
+https://opensees.berkeley.edu/wiki/index.php/Tcl_input_files_for_the_provided_application_examples:
 
-If you plan on collaborating or even using OpenSees as your base code it is highly recommended that
-you FORK this repo to your own account and work on it there. We will not allow anybody to write to
-this repo. Only PULL requests will be considered. To fork the repo click on the FORK at the top of this page.
 
-For a brief outline on forking we suggest:
-https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow
-
-For a brief introduction to using your new FORK we suggest:
-https://www.atlassian.com/git/tutorials/saving-changes
+Xiamen University
 
 
